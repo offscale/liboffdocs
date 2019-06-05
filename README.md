@@ -17,49 +17,48 @@ Use a simple YAML file to control ETL.
 ### Config file
 ```yaml
 base_angular_repo: '.' # this repo
-wiki:
-- url: https://github.com/offscale/some-proj.wiki.git
-  after:
-    - ng-git-gen -p "$PWD" -g 'https://github.com/offscale/some-proj.wiki.git' -l -o '.md' -vv
-  target: '/wiki0'
-- url: https://github.com/offscale/some-proj.wiki.git
-  after:
-    - ng-git-gen -p "$PWD" -g 'https://github.com/offscale/some-proj.wiki.git' -l -o '.md' -vv
-  target: '/wiki1'
+code:
+- url: https://github.com/offscale/golang-proj.git
+  type: {$ref: "#/_types/sphinx"}
+  target: '/docs/go'
+- url: https://github.com/offscale/rust-proj.git
+  type: {$ref: "#/_types/sphinx"}
+  target: '/docs/rust'
+- url: https://github.com/offscale/java-proj.git
+  type: {$ref: "#/_types/sphinx"}
+  target: '/docs/java'
 blog:
 - # TBD
 rfc:
 - url: https://github.com/offscale/rfcs.git
-  dependencies: {$ref: "#/_dependencies/rfc"}
-  after:
-    - ng-git-gen -p "$PWD" -g 'https://github.com/offscale/rfcs.git' -l -b 'make html_body' -e '.html' -i "import { NgxPageScrollModule } from 'ngx-page-scroll';" -f '.replace(/href="#/g, `pageScroll href="#`)' -r rfc -s './xml2rfc.css' -vv
-    - ng-md-components -d "$PWD"
-    - cp /usr/local/lib/python3.*/dist-packages/xml2rfc/data/{xml2rfc.js,xml2rfc.css} src/app/rfc/generated/
+  type: {$ref: "#/_types/rfc"}
   target: '/rfcs'
-code:
-- url: https://github.com/offscale/golang-proj.git
-  dependencies: {$ref: "#/_dependencies/sphinx"}
-  env:
-    LANGUAGE: golang
-    ROOT_URL: {$ref: "/url"}
-  after:
-    - python -m comment_extraction antlr.py
-  target: '/docs/go'
-- url: https://github.com/offscale/rust-proj.git
-  dependencies: {$ref: "#/_dependencies/sphinx"}
-  env:
-    LANGUAGE: rust
-    ROOT_URL: {$ref: "/url"}
-  after: python -m comment_extraction antlr.py
-  target: '/docs/rust'
-- url: https://github.com/offscale/java-proj.git
-  dependencies: {$ref: "#/_dependencies/sphinx"}
-  env:
-    LANGUAGE: java
-    ROOT_URL: {$ref: "/url"}
-  after: python -m comment_extraction antlr.py
-  target: '/docs/java'
+wiki:
+- url: https://github.com/offscale/some-proj.wiki.git
+  type: {$ref: "#/_types/wiki"}
+  target: '/wiki0'
+- url: https://github.com/offscale/some-proj.wiki.git
+  type: {$ref: "#/_types/wiki"}
+  target: '/wiki1'
 
+# Consider making these a default list than can be extended or overridden
+_types:
+  code:
+    dependencies: {$ref: "#/_dependencies/sphinx"}
+    after: python -m comment_extraction antlr.py
+  rfc:
+    dependencies: {$ref: "#/_dependencies/rfc"}
+    after:
+      - ng-git-gen -p "$PWD" -l -b 'make html_body' -e '.html' -i "import { NgxPageScrollModule } from 'ngx-page-scroll';" -f '.replace(/href="#/g, `pageScroll href="#`)' -r rfc -s './xml2rfc.css' -vv
+      - ng-md-components -d "$PWD"
+      - cp /usr/local/lib/python3.*/dist-packages/xml2rfc/data/{xml2rfc.js,xml2rfc.css} src/app/rfc/generated/
+  wiki:
+    description: Github wiki
+    dependencies: {$ref: "#/_dependencies/wiki"}
+    after:
+      - ng-git-gen -p "$PWD" -l -o '.md' -vv
+
+# Consider making these a default list than can be extended or overridden
 # Consider switching this syntax to that of `liboffsetup`, and using its internal functions
 _dependencies:
   rfc:
@@ -97,6 +96,13 @@ _dependencies:
         - python3-lxml
       bash:
         - pip install https://github.com/dev10/comment-extraction/archive/master.tar.gz#egg=comment-extraction
+  wiki:
+    - os: linux
+      arch: amd64
+      distribution: Ubuntu
+      version: '>16.04'
+      apt: {$ref: "#/_dependencies/rfc/apt"}
+      bash: {$ref: "#/_dependencies/rfc/bash"}  
 ```
 
 ## RFCs
