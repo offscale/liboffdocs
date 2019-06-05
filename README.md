@@ -19,28 +19,28 @@ Use a simple YAML file to control ETL.
 base_angular_repo: '.' # this repo
 code:
 - url: https://github.com/offscale/golang-proj.git
-  type: {$ref: "#/_types/sphinx"}
+  type: {$ref: "#/_types/sphinx"} # shown as an example of a custom type overriding
   target: '/docs/go'
 - url: https://github.com/offscale/rust-proj.git
-  type: {$ref: "#/_types/sphinx"}
   target: '/docs/rust'
 - url: https://github.com/offscale/java-proj.git
-  type: {$ref: "#/_types/sphinx"}
   target: '/docs/java'
 blog:
 - # TBD
 rfc:
 - url: https://github.com/offscale/rfcs.git
-  type: {$ref: "#/_types/rfc"}
   target: '/rfcs'
 wiki:
 - url: https://github.com/offscale/some-proj.wiki.git
-  type: {$ref: "#/_types/wiki"}
   target: '/wiki0'
 - url: https://github.com/offscale/some-proj.wiki.git
-  type: {$ref: "#/_types/wiki"}
   target: '/wiki1'
+```
 
+
+#### Implementation details
+These are all implementation details, and can be completely rethought. Consider using [liboffsetup](https://github.com/offscale/liboffsetup) here.
+```yaml
 # Consider making these a default list than can be extended or overridden
 _types:
   code:
