@@ -1,0 +1,14 @@
+[package]
+name = "liboffdocs"
+version = "0.0.1"
+authors = ["Samuel Marks @SamuelMarks"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+homepage = "https://offscale.io"
+repository = "https://github.com/offscale/liboffdocs"
+
+[dependencies]
+structopt = "0.2.17"
+url = "1.7.2"
+serde = { version = "1.0.92", features = ["derive"] }
+serde_yaml = "0.8.9"
